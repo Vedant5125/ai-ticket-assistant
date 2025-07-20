@@ -48,7 +48,7 @@ Ticket information:
 - Title: ${ticket.title}
 - Description: ${ticket.description}`);
 
-const rawJson = response.output[0].context
+const rawJson = response.output[0].content
 
 try {
     const match = rawJson.match(/```json\s*([\s\S]*?)\s*```/i)

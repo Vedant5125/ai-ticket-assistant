@@ -15,11 +15,11 @@ const ticketSchema = new Schema(
     },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "user"
+      ref: "User"
     },
     assignedTo: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "user",
+      ref: "User",
       default: null
     },
     priority: {

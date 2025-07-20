@@ -6,11 +6,11 @@ import { inngest } from "../Inngest/client.js"
 export const signUp = async(req, res) => {
     const {email, password, skills =[] } = req.body
     try {
-        const hashedPassword = bcrypt.hash(password, 10)
+        const hashedPassword = await bcrypt.hash(password, 10)
         const user = await User.create({email, password: hashedPassword, skills})
 
         await inngest.send({
-            name: user/signUp,
+            name: "user/signUp",
             data: {
                 email
             }
@@ -32,12 +32,12 @@ export const signUp = async(req, res) => {
 export const login = async(req, res) => {
     const {email, password} = req.body;
     try {
-        const user = User.findOne({email});
+        const user = await User.findOne({email});
         if(!user){
             return res.status(401).json({error:"User not found"})
         }
 
-        const isMatched= bcrypt.compare(password, user.password);
+        const isMatched= await bcrypt.compare(password, user.password);
         if(!isMatched){
             return res.status(401).json({error: "Invalid credentials"})
         }
@@ -100,7 +100,7 @@ export const getUsers = async(req, res) =>{
         if(req.user.role != "admin"){
             return res.status(403).json({error: "Forbidden"})
         }
-        const users = await User.find.select("-password")
+        const users = await User.find().select("-password")
         return res.json(users)
     } catch (error) {
         res.status(500).json({error: "getUser failed", details: error.message});
