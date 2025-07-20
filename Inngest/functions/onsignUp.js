@@ -1,6 +1,7 @@
 import {inngest} from "../client.js"
 import user from "../../models/user.model.js"
 import { NonRetriableError } from "inngest"
+import  {sendEmail} from "../../utils/mailer.js"
 
 export const onUserSignup = inngest.createFunction(
     {id: "user-signup", retries: 2},
