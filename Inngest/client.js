@@ -1,3 +1,3 @@
 import {Inngest} from "inngest"
 
-export const Inngest = new Inngest({id: "ticketing-function"})
+export const inngest = new Inngest({id: "ticketing-function"})

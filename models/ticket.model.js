@@ -1,40 +1,51 @@
-import mongoose from "mongoose";
+import mongoose, {Schema} from "mongoose";
 
-const ticketSchema = new Schema({
+const ticketSchema = new Schema(
+  {
     ticket: {
-        type: String
+      type: String
     },
     description: {
-        type: String,
+      type: String
     },
     status: {
-        type: String,
-        enum: ["open", "in-progress", "closed"],
-        default: "open"
+      type: String,
+      enum: ["open", "in-progress", "closed"],
+      default: "open"
     },
     createdBy: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "user",
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "user"
     },
-    assignedTo:{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "user",
-        default: null
+    assignedTo: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "user",
+      default: null
     },
-    priority:{
-        type: String,
-        enum: ["low", "medium", "high"],
-        default: "medium"
+    priority: {
+      type: String,
+      enum: ["low", "medium", "high"],
+      default: "medium"
     },
-    deadline:{
-        type: Date
+    deadline: {
+      type: Date
     },
     helpfulNotes: {
-        type: String
+      type: String
     },
-    relatedSkills: [{
+    relatedSkills: [
+      {
         type: String
-    }],
-},{timestamps: true})
+      }
+    ],
+    createdAt: {
+      type: Date,
+      default: Date.now
+    }
+  },
+  { timestamps: true }
+);
 
-export const ticket = mongoose.model("ticket", ticketSchema)
+const ticket = mongoose.model("ticket", ticketSchema);
+
+export default ticket;

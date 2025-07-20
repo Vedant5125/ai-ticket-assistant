@@ -26,3 +26,4 @@ export const sendmail = async (to, subject, text) => {
     throw error;
   }
 };
+
