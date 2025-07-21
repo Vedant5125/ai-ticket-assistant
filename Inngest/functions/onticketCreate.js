@@ -25,6 +25,8 @@ export const onTicketCreate = inngest.createFunction(
             })
 
             const aiResponse = await analyzeTicket(ticket);
+            console.log("🧠 AI Response:", aiResponse);
+
 
             //returning related skills also useful for finding moderator
             const relatedSkills = await step.run("ai-processing", async() => {

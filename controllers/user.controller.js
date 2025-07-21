@@ -4,10 +4,11 @@ import User from "../models/user.model.js"
 import { inngest } from "../Inngest/client.js"
 
 export const signUp = async(req, res) => {
-    const {email, password, skills =[] } = req.body
+    const {email, password, role: UserRole, skills =[] } = req.body
     try {
         const hashedPassword = await bcrypt.hash(password, 10)
-        const user = await User.create({email, password: hashedPassword, skills})
+        const role = UserRole === "admin" ? "admin" : "user";
+        const user = await User.create({email, password: hashedPassword, role, skills})
 
         await inngest.send({
             name: "user/signUp",
@@ -72,28 +73,52 @@ export const logout = async(req, res) => {
     }
 }
 
-export const updateUser = async(req, res) =>{
-    const {skills = [], role, email} = req.body;
-    try {
-        if(req.user?.role != "admin"){
-            return res.status(403).json({error: "Forbidden"})
-        }
-        const user = await User.findOne({email});
-        if(!user){
-            return res.status(401).json({error:"User not found"})
-        }
+// export const updateUser = async(req, res) =>{
+//     const {skills = [], role, email} = req.body;
+//     try {
+//         if(req.user?.role != "admin"){
+//             return res.status(403).json({error: "Forbidden"})
+//         }
+//         const user = await User.findOne({email});
+//         if(!user){
+//             return res.status(401).json({error:"User not found"})
+//         }
 
-        await user.updateOne(
-            {email},
-            {skills: skills.length? skills : user.skills, role}
-        )
+//         await user.updateOne(
+//             {email},
+//             {skills: skills.length? skills : user.skills, role}
+//         )
 
-        return res.json({message: "User updated successfully"});
+//         return res.json({message: "User updated successfully"});
 
-    } catch (error) {
-        res.status(500).json({error: "update failed", details: error.message});
+//     } catch (error) {
+//         res.status(500).json({error: "update failed", details: error.message});
+//     }
+// }
+
+export const updateUser = async (req, res) => {
+  const { skills = [], role, email } = req.body;
+  try {
+    if (req.user?.role !== "admin") {
+      return res.status(403).json({ error: "Forbidden" });
     }
-}
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(401).json({ error: "User not found" });
+    }
+
+    user.skills = skills.length ? skills : user.skills;
+    user.role = role || user.role;
+
+    await user.save();
+
+    return res.json({ message: "User updated successfully" });
+  } catch (error) {
+    res.status(500).json({ error: "Update failed", details: error.message });
+  }
+};
+
 
 export const getUsers = async(req, res) =>{
     try {

@@ -25,7 +25,7 @@ const userSchema = new Schema(
       default: Date.now
     }
   },
-  { timeStamps: true }
+  { timestamps: true }
 );
 
 const user = mongoose.model("user", userSchema);

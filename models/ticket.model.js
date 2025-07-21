@@ -1,4 +1,4 @@
-import mongoose, {Schema} from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 const ticketSchema = new Schema(
   {
@@ -15,11 +15,11 @@ const ticketSchema = new Schema(
     },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User"
+      ref: "user"
     },
     assignedTo: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: "user",
       default: null
     },
     priority: {
