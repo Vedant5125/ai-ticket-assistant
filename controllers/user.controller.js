@@ -98,21 +98,25 @@ export const logout = async(req, res) => {
 
 export const updateUser = async (req, res) => {
   const { skills = [], role, email } = req.body;
+  console.log("📩 Incoming update payload:", { email, role, skills });
   try {
     if (req.user?.role !== "admin") {
+        console.log("❌ Forbidden: Not an admin");
       return res.status(403).json({ error: "Forbidden" });
     }
 
     const user = await User.findOne({ email });
     if (!user) {
+        console.log("❌ User not found for email:", email);
       return res.status(401).json({ error: "User not found" });
     }
 
     user.skills = skills.length ? skills : user.skills;
     user.role = role || user.role;
 
+    console.log("🛠 Updated User Object Before Save:", user);
     await user.save();
-
+    console.log("✅ User updated successfully:", user.email);
     return res.json({ message: "User updated successfully" });
   } catch (error) {
     res.status(500).json({ error: "Update failed", details: error.message });

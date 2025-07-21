@@ -46,7 +46,10 @@ export const getTickets = async (req, res) => {
       tickets = await Ticket.find({})
         .populate("assignedTo", ["email", "_id"])
         .sort({ createdAt: -1 });
-    } else {
+    }else if (user.role === "moderator") {
+      tickets = await Ticket.find({ assignedTo: user._id })
+        .populate("assignedTo", ["email", "_id"]);
+    }else {
       tickets = await Ticket.find({ createdBy: user._id })
         .select("title description status createdAt")
         .sort({ createdAt: -1 });
@@ -90,5 +93,30 @@ export const getTicket = async (req, res) => {
   } catch (error) {
     console.error("Error fetching ticket ", error.message);
     return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+
+export const updateTicketStatus = async (req, res) => {
+  try {
+    const { status } = req.body;
+    const ticketId = req.params.id;
+
+    const ticket = await Ticket.findById(ticketId);
+
+    if (!ticket) return res.status(404).json({ error: "Ticket not found" });
+
+    // Only moderator assigned to it OR admin can update
+    if (ticket.assignedTo?.toString() !== req.user._id && req.user.role !== "admin") {
+      return res.status(403).json({ error: "Not authorized" });
+    }
+
+    ticket.status = status;
+    await ticket.save();
+
+    res.status(200).json({ message: "Status updated", ticket });
+  } catch (err) {
+    console.error("Update error:", err.message);
+    res.status(500).json({ error: "Update failed" });
   }
 };
